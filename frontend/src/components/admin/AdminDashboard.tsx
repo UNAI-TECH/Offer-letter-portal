@@ -163,12 +163,12 @@ export const AdminDashboard: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto my-12 bg-white rounded-xl border border-gray-200/90 shadow-sm p-6 sm:p-8">
-        <div className="text-center mb-6">
-          <div className="mx-auto w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-unai-purple mb-3">
-            <Lock className="w-6 h-6" />
+      <div className="max-w-md mx-auto my-6 sm:my-12 bg-white rounded-xl border border-gray-200/90 shadow-sm p-4 sm:p-8">
+        <div className="text-center mb-5 sm:mb-6">
+          <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-50 flex items-center justify-center text-unai-purple mb-2.5 sm:mb-3">
+            <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Administrator Console</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">Administrator Console</h2>
           <p className="text-xs text-gray-500 mt-1">
             Sign in with authorized UNAI TECH administrator credentials.
           </p>
@@ -191,13 +191,13 @@ export const AdminDashboard: React.FC = () => {
               value={adminPass}
               onChange={(e) => setAdminPass(e.target.value)}
               placeholder="Enter administrator passkey"
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple"
+              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2.5 px-4 rounded-lg bg-unai-purple text-white text-sm font-semibold hover:bg-unai-purple-dark transition-colors shadow-sm"
+            className="w-full py-3 px-4 rounded-lg bg-unai-purple text-white text-sm font-semibold hover:bg-unai-purple-dark transition-all shadow-sm active:scale-[0.99] min-h-[44px]"
           >
             Authenticate Administrator
           </button>
@@ -209,18 +209,18 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header Bar */}
-      <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-            <h2 className="text-lg font-bold text-gray-900">Administrator Management Console</h2>
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0" />
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">Administrator Management Console</h2>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
             UNAI TECH Virtual Internship Offer Letter Portal • Enterprise Database & Security
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <button
             onClick={loadAllData}
             disabled={loading}
@@ -240,12 +240,12 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 overflow-x-auto pb-1 text-sm font-medium">
+      <div className="flex items-center gap-1.5 sm:gap-2 border-b border-gray-200 overflow-x-auto pb-1 text-xs sm:text-sm font-medium no-scrollbar">
         {[
-          { key: 'overview', label: 'Dashboard Overview', icon: Layers },
-          { key: 'import', label: 'Excel Import Manager', icon: Upload },
+          { key: 'overview', label: 'Overview', icon: Layers },
+          { key: 'import', label: 'Excel Import', icon: Upload },
           { key: 'participants', label: `Participants (${participants.length})`, icon: Users },
-          { key: 'offers', label: `Issued Letters (${offerLetters.length})`, icon: FileText },
+          { key: 'offers', label: `Issued (${offerLetters.length})`, icon: FileText },
           { key: 'templates', label: 'PDF Template', icon: FileCode },
           { key: 'audit', label: `Audit Trail (${auditLogs.length})`, icon: History },
         ].map((tab) => {
@@ -255,13 +255,13 @@ export const AdminDashboard: React.FC = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
                 active
-                  ? 'bg-unai-purple text-white font-semibold'
+                  ? 'bg-unai-purple text-white font-semibold shadow-xs'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>{tab.label}</span>
             </button>
           );
@@ -270,8 +270,8 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 1: OVERVIEW METRICS */}
       {activeTab === 'overview' && stats && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-sm">
               <p className="text-xs font-medium text-gray-500">Unique Participants</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalParticipants}</p>

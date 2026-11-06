@@ -46,29 +46,29 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-6 sm:p-8">
-      <div className="mb-6">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-unai-purple text-xs font-semibold mb-3">
+    <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-4 sm:p-8 transition-all">
+      <div className="mb-5 sm:mb-6">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-unai-purple text-xs font-semibold mb-2.5 sm:mb-3">
           <span>Step 1 of 3</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
           Verify Your Registration
         </h2>
-        <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">
+        <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">
           Please enter your official registered name and email address as used during enrollment in the UNAI TECH Virtual Internship Program.
         </p>
       </div>
 
       {errorMessage && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-          <p className="text-sm font-medium leading-relaxed">{errorMessage}</p>
+        <div className="mb-5 p-3.5 sm:p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 flex items-start gap-2.5 sm:gap-3">
+          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 shrink-0 mt-0.5" />
+          <p className="text-xs sm:text-sm font-medium leading-relaxed">{errorMessage}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5" noValidate>
         <div>
-          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label htmlFor="fullName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
             Full Name <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -82,17 +82,18 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Amman Kumar D"
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
               disabled={loading}
+              autoComplete="name"
             />
           </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Enter your name as provided in the Google Classroom registration.
+          <p className="mt-1 text-[11px] sm:text-xs text-gray-500">
+            Enter your name as registered in the official program roster.
           </p>
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
             Registered Email Address <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -106,11 +107,13 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. student@gmail.com"
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
               disabled={loading}
+              autoComplete="email"
+              inputMode="email"
             />
           </div>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-[11px] sm:text-xs text-gray-500">
             Case-insensitive validation against imported classroom rosters.
           </p>
         </div>
@@ -119,7 +122,7 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-unai-purple text-white text-sm font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-unai-purple text-white text-sm font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-xs active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed min-h-[44px]"
           >
             {loading ? (
               <>
@@ -136,9 +139,9 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
         </div>
       </form>
 
-      <div className="mt-6 pt-5 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+      <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-gray-100 flex flex-col xs:flex-row items-center justify-between gap-1 text-[11px] sm:text-xs text-gray-500">
         <span>Authoritative Domain Verification</span>
-        <span className="font-mono text-[11px] text-gray-400">SHA-256 Protected</span>
+        <span className="font-mono text-[10px] sm:text-[11px] text-gray-400">SHA-256 Protected</span>
       </div>
     </div>
   );

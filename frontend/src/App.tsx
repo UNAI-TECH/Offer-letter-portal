@@ -9,17 +9,32 @@ import type { VerifiedParticipantSession, GeneratedOfferLetterData } from './typ
 import { Award, ShieldCheck, AlertOctagon, Clock } from 'lucide-react';
 import { isOfferLetterDeadlinePassed } from './services/api';
 
+/**
+ * Robust detection of the admin route across all routing styles:
+ * - /adminconsole
+ * - \adminconsole or /%5Cadminconsole
+ * - /#adminconsole or /?adminconsole
+ * - SPA fallback: /#route=%2Fadminconsole
+ */
 function checkIsAdminRoute(): boolean {
   if (typeof window === 'undefined') return false;
-  const path = (window.location.pathname || '').toLowerCase();
-  const hash = (window.location.hash || '').toLowerCase();
-  const search = (window.location.search || '').toLowerCase();
+  try {
+    const rawHref = window.location.href || '';
+    const decodedHref = decodeURIComponent(rawHref).toLowerCase();
+    const rawPath = window.location.pathname || '';
+    const decodedPath = decodeURIComponent(rawPath).toLowerCase();
+    const hash = (window.location.hash || '').toLowerCase();
+    const search = (window.location.search || '').toLowerCase();
 
-  return (
-    path.includes('adminconsole') ||
-    hash.includes('adminconsole') ||
-    search.includes('adminconsole')
-  );
+    return (
+      decodedHref.includes('adminconsole') ||
+      decodedPath.includes('adminconsole') ||
+      hash.includes('adminconsole') ||
+      search.includes('adminconsole')
+    );
+  } catch {
+    return false;
+  }
 }
 
 export const App: React.FC = () => {
@@ -36,6 +51,9 @@ export const App: React.FC = () => {
 
     window.addEventListener('popstate', handleLocationChange);
     window.addEventListener('hashchange', handleLocationChange);
+
+    // Initial check in case of SPA redirects
+    handleLocationChange();
 
     // Periodic deadline tick check
     const interval = setInterval(() => {
@@ -81,32 +99,32 @@ export const App: React.FC = () => {
         deadlinePassed={deadlinePassed}
       />
 
-      <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+      <main className="flex-1 py-6 sm:py-12 px-3 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
         {isAdminView ? (
           <AdminDashboard />
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Hero / Portal Title Section */}
-            <div className="text-center max-w-2xl mx-auto space-y-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-100 text-unai-purple text-xs font-semibold">
-                <Award className="w-3.5 h-3.5" />
-                <span>UNAI TECH Pvt. Ltd. • Virtual Internship Program</span>
+            <div className="text-center max-w-2xl mx-auto space-y-2 sm:space-y-3 px-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-100 text-unai-purple text-[11px] sm:text-xs font-semibold">
+                <Award className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">UNAI TECH Pvt. Ltd. • Virtual Internship Program</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
                 Internship Offer Letter Portal
               </h1>
 
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+              <p className="text-xs sm:text-base text-gray-600 leading-relaxed max-w-xl mx-auto">
                 Welcome to the official UNAI TECH Virtual Internship Program portal. Verify your registration details and download your official personalized internship offer letter.
               </p>
             </div>
 
             {/* Deadline Announcement / Warning Banner */}
             {deadlinePassed ? (
-              <div className="max-w-xl mx-auto p-5 rounded-xl bg-red-50 border border-red-200 text-red-900 shadow-sm">
+              <div className="max-w-xl mx-auto p-4 sm:p-5 rounded-xl bg-red-50 border border-red-200 text-red-900 shadow-xs">
                 <div className="flex items-start gap-3">
-                  <AlertOctagon className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
+                  <AlertOctagon className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <h3 className="font-bold text-sm sm:text-base text-red-900">
                       Offer Letter Generation Concluded
@@ -119,77 +137,83 @@ export const App: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="max-w-xl mx-auto p-3.5 rounded-lg bg-purple-50/70 border border-purple-100 text-unai-purple flex items-center justify-between text-xs font-medium">
+              <div className="max-w-xl mx-auto p-3 sm:p-3.5 rounded-lg bg-purple-50/70 border border-purple-100 text-unai-purple flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs font-medium">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-unai-purple shrink-0" />
                   <span>Important: Generation window closes on <strong>09 November 2026 at 12:00 PM IST</strong>.</span>
                 </div>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-white text-unai-purple font-semibold border border-purple-200 text-[11px]">
+                <span className="self-start sm:self-center px-2 py-0.5 rounded bg-white text-unai-purple font-semibold border border-purple-200 text-[11px] whitespace-nowrap">
                   1 Download per Domain
                 </span>
               </div>
             )}
 
-            {/* Stepper Progress Bar */}
-            <div className="max-w-xl mx-auto">
+            {/* Responsive Stepper Progress Bar */}
+            <div className="max-w-xl mx-auto px-1">
               <div className="flex items-center justify-between text-xs font-medium text-gray-500">
+                {/* Step 1 */}
                 <div
-                  className={`flex items-center gap-1.5 ${
+                  className={`flex items-center gap-1.5 shrink-0 ${
                     !session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
                   }`}
                 >
                   <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
                       session
                         ? 'bg-green-600 text-white'
                         : !session
-                        ? 'bg-unai-purple text-white'
+                        ? 'bg-unai-purple text-white shadow-xs'
                         : 'bg-gray-200 text-gray-600'
                     }`}
                   >
                     {session ? '✓' : '1'}
                   </span>
-                  <span>Identity Verification</span>
+                  <span className="hidden sm:inline">Identity Verification</span>
+                  <span className="sm:hidden text-[11px]">Identity</span>
                 </div>
 
-                <div className="w-8 sm:w-16 h-px bg-gray-200" />
+                <div className="flex-1 mx-2 sm:mx-4 h-px bg-gray-200" />
 
+                {/* Step 2 */}
                 <div
-                  className={`flex items-center gap-1.5 ${
+                  className={`flex items-center gap-1.5 shrink-0 ${
                     session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
                   }`}
                 >
                   <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
                       generatedLetter
                         ? 'bg-green-600 text-white'
                         : session
-                        ? 'bg-unai-purple text-white'
+                        ? 'bg-unai-purple text-white shadow-xs'
                         : 'bg-gray-200 text-gray-600'
                     }`}
                   >
                     {generatedLetter ? '✓' : '2'}
                   </span>
-                  <span>Domain Authorization</span>
+                  <span className="hidden sm:inline">Domain Authorization</span>
+                  <span className="sm:hidden text-[11px]">Domain</span>
                 </div>
 
-                <div className="w-8 sm:w-16 h-px bg-gray-200" />
+                <div className="flex-1 mx-2 sm:mx-4 h-px bg-gray-200" />
 
+                {/* Step 3 */}
                 <div
-                  className={`flex items-center gap-1.5 ${
+                  className={`flex items-center gap-1.5 shrink-0 ${
                     generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
                   }`}
                 >
                   <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
                       generatedLetter
-                        ? 'bg-unai-purple text-white'
+                        ? 'bg-unai-purple text-white shadow-xs'
                         : 'bg-gray-200 text-gray-600'
                     }`}
                   >
                     3
                   </span>
-                  <span>Offer Letter Download</span>
+                  <span className="hidden sm:inline">Offer Letter Download</span>
+                  <span className="sm:hidden text-[11px]">Download</span>
                 </div>
               </div>
             </div>
@@ -197,11 +221,11 @@ export const App: React.FC = () => {
             {/* Interactive Step Content */}
             <div className="max-w-xl mx-auto">
               {deadlinePassed && !session && !generatedLetter ? (
-                <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-8 text-center space-y-4">
+                <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-6 sm:p-8 text-center space-y-4">
                   <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-gray-400">
                     <Clock className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-800">Registration Verification Closed</h3>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-800">Registration Verification Closed</h3>
                   <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
                     Offer letter generation is strictly disabled after the official deadline of <strong>09 November 2026, 12:00 PM IST</strong>. If you previously registered and were unable to download before the deadline, please contact UNAI TECH management.
                   </p>
@@ -231,10 +255,10 @@ export const App: React.FC = () => {
             </div>
 
             {/* Security Assurance Footer Note */}
-            <div className="max-w-xl mx-auto pt-6 text-center">
-              <div className="inline-flex items-center gap-2 text-xs text-gray-400">
-                <ShieldCheck className="w-4 h-4 text-gray-400" />
-                <span>Official PDF Overlay Engine • SHA-256 Token Sessions • Idempotent Issuance</span>
+            <div className="max-w-xl mx-auto pt-4 sm:pt-6 text-center px-2">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-gray-400">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
+                <span className="leading-tight">Official PDF Overlay Engine • SHA-256 Token Sessions • Idempotent Issuance</span>
               </div>
             </div>
           </div>
