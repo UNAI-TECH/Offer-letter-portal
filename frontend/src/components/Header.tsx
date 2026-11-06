@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
           <img
             src="/logo.png"
             alt="UNAI TECH Pvt. Ltd."
-            className="h-8 sm:h-10 w-auto object-contain shrink-0"
+            className="h-8 sm:h-11 w-auto object-contain shrink-0"
           />
           <div className="hidden xs:block h-5 sm:h-6 w-px bg-gray-200 shrink-0" />
           <div className="hidden xs:block truncate">
