@@ -6,7 +6,7 @@ import { Step2DomainSelection } from './components/Step2DomainSelection';
 import { Step3DownloadOfferLetter } from './components/Step3DownloadOfferLetter';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import type { VerifiedParticipantSession, GeneratedOfferLetterData } from './types';
-import { Award, ShieldCheck, AlertOctagon, Clock } from 'lucide-react';
+import { Award, AlertOctagon, Clock, Phone, Mail, Headphones } from 'lucide-react';
 import { isOfferLetterDeadlinePassed } from './services/api';
 
 /**
@@ -254,11 +254,40 @@ export const App: React.FC = () => {
               )}
             </div>
 
-            {/* Security Assurance Footer Note */}
-            <div className="max-w-xl mx-auto pt-4 sm:pt-6 text-center px-2">
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-gray-400">
-                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
-                <span className="leading-tight">Official PDF Overlay Engine • SHA-256 Token Sessions • Idempotent Issuance</span>
+            {/* Contact Administrator Section */}
+            <div className="max-w-xl mx-auto bg-white rounded-xl border border-gray-200/90 shadow-sm p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3.5">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1 rounded-md bg-purple-50 text-unai-purple">
+                      <Headphones className="w-4 h-4" />
+                    </span>
+                    <h3 className="text-sm font-bold text-gray-900">
+                      Contact Administrator
+                    </h3>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Need assistance with your verification or offer letter?
+                  </p>
+                </div>
+
+                <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
+                  <a
+                    href="tel:9043988697"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-50 hover:bg-purple-50 text-gray-700 hover:text-unai-purple border border-gray-200 text-xs font-semibold transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-unai-purple shrink-0" />
+                    <span>9043988697</span>
+                  </a>
+
+                  <a
+                    href="mailto:contact@unaitech.com"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-50 hover:bg-purple-50 text-gray-700 hover:text-unai-purple border border-gray-200 text-xs font-semibold transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-unai-purple shrink-0" />
+                    <span>contact@unaitech.com</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

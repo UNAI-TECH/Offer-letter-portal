@@ -81,8 +81,8 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. Amman Kumar D"
-              className="w-full pl-10 pr-4 py-2.5 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
+              placeholder="Enter your name"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors shadow-2xs"
               disabled={loading}
               autoComplete="name"
             />
@@ -106,8 +106,8 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. student@gmail.com"
-              className="w-full pl-10 pr-4 py-2.5 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
+              placeholder="Enter your registered mail address"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors shadow-2xs"
               disabled={loading}
               autoComplete="email"
               inputMode="email"
@@ -138,11 +138,6 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
           </button>
         </div>
       </form>
-
-      <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-gray-100 flex flex-col xs:flex-row items-center justify-between gap-1 text-[11px] sm:text-xs text-gray-500">
-        <span>Authoritative Domain Verification</span>
-        <span className="font-mono text-[10px] sm:text-[11px] text-gray-400">SHA-256 Protected</span>
-      </div>
     </div>
   );
 };

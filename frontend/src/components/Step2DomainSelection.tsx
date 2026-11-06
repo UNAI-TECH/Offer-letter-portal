@@ -147,7 +147,7 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
               value={collegeName}
               onChange={(e) => setCollegeName(e.target.value)}
               placeholder="e.g. Government College of Engineering"
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors shadow-2xs"
               disabled={loading}
             />
           </div>
@@ -170,7 +170,7 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
               required
               value={selectedDomain}
               onChange={(e) => setSelectedDomain(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-base sm:text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-unai-purple/20 focus:border-unai-purple transition-colors shadow-2xs"
               disabled={loading}
             >
               <option value="">-- Select Your Registered Domain --</option>
@@ -206,11 +206,6 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
           </button>
         </div>
       </form>
-
-      <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-gray-100 flex flex-col xs:flex-row items-center justify-between gap-1 text-[11px] sm:text-xs text-gray-500">
-        <span>Backend Domain Authorization</span>
-        <span className="font-mono text-[10px] sm:text-[11px] text-gray-400">Single-Use Limit Enforced</span>
-      </div>
     </div>
   );
 };
