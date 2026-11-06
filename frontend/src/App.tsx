@@ -174,19 +174,17 @@ export const App: React.FC = () => {
                     if (generatedLetter && (generatedLetter.downloadCount || 0) < 1) handleBackToStep1();
                   }}
                   disabled={!session || ((generatedLetter?.downloadCount || 0) >= 1)}
-                  className={`flex items-center gap-1.5 shrink-0 transition-opacity ${
-                    session && ((generatedLetter?.downloadCount || 0) < 1) ? 'cursor-pointer hover:opacity-80' : ''
-                  } ${!session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'}`}
+                  className={`flex items-center gap-1.5 shrink-0 transition-opacity ${session && ((generatedLetter?.downloadCount || 0) < 1) ? 'cursor-pointer hover:opacity-80' : ''
+                    } ${!session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'}`}
                   title={session && ((generatedLetter?.downloadCount || 0) < 1) ? 'Click to return to Step 1' : ''}
                 >
                   <span
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
-                      session
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${session
                         ? 'bg-green-600 text-white'
                         : !session
-                        ? 'bg-unai-purple text-white shadow-xs'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
+                          ? 'bg-unai-purple text-white shadow-xs'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
                   >
                     {session ? '✓' : '1'}
                   </span>
@@ -203,19 +201,17 @@ export const App: React.FC = () => {
                     if (generatedLetter && (generatedLetter.downloadCount || 0) < 1) handleBackToStep2();
                   }}
                   disabled={!generatedLetter || ((generatedLetter.downloadCount || 0) >= 1)}
-                  className={`flex items-center gap-1.5 shrink-0 transition-opacity ${
-                    generatedLetter && (generatedLetter.downloadCount || 0) < 1 ? 'cursor-pointer hover:opacity-80' : ''
-                  } ${session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'}`}
+                  className={`flex items-center gap-1.5 shrink-0 transition-opacity ${generatedLetter && (generatedLetter.downloadCount || 0) < 1 ? 'cursor-pointer hover:opacity-80' : ''
+                    } ${session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'}`}
                   title={generatedLetter && (generatedLetter.downloadCount || 0) < 1 ? 'Click to return to Step 2' : ''}
                 >
                   <span
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
-                      generatedLetter
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${generatedLetter
                         ? 'bg-green-600 text-white'
                         : session
-                        ? 'bg-unai-purple text-white shadow-xs'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
+                          ? 'bg-unai-purple text-white shadow-xs'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
                   >
                     {generatedLetter ? '✓' : '2'}
                   </span>
@@ -227,16 +223,14 @@ export const App: React.FC = () => {
 
                 {/* Step 3 */}
                 <div
-                  className={`flex items-center gap-1.5 shrink-0 ${
-                    generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
-                  }`}
+                  className={`flex items-center gap-1.5 shrink-0 ${generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
+                    }`}
                 >
                   <span
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
-                      generatedLetter
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${generatedLetter
                         ? 'bg-unai-purple text-white shadow-xs'
                         : 'bg-gray-200 text-gray-600'
-                    }`}
+                      }`}
                   >
                     3
                   </span>
