@@ -1,6 +1,6 @@
 # UNAI TECH – Phase 8 Comprehensive Quality Assurance Report
 
-**Execution Date:** 2026-11-06T06:38:08.563Z
+**Execution Date:** 2026-11-06T07:08:38.537Z
 **Total Test Cases:** 19
 **Passed:** 19 | **Failed:** 0
 
@@ -16,8 +16,8 @@
 | `TEST_8` | Correct email with unregistered domain (must reject generation) | ✅ PASSED | Abdul Rahman Shaikh is not in APP DEVELOPMENT, rejected |
 | `TEST_9` | Inactive participant status check | ✅ PASSED | Inactive participant disallowed from verification |
 | `TEST_10` | Empty college name validation (must reject) | ✅ PASSED | Rejected empty college name |
-| `TEST_11` | Long participant name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011959 bytes |
-| `TEST_12` | Long college name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011961 bytes |
+| `TEST_11` | Long participant name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011962 bytes |
+| `TEST_12` | Long college name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011964 bytes |
 | `TEST_13` | Duplicate PDF generation idempotency | ✅ PASSED | Existing offer letter retrieved instead of creating redundant document |
 | `TEST_14` | Expired verification session rejection | ✅ PASSED | Expired session correctly invalidated |
 | `TEST_15` | Official Issue Date validation (01 November 2026) | ✅ PASSED | Single page PDF with fixed issue date: 01 November 2026 |
