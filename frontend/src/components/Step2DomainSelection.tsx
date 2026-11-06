@@ -18,16 +18,20 @@ import { DOMAIN_OPTIONS } from '../types';
 interface Step2Props {
   session: VerifiedParticipantSession;
   onSuccess: (offerLetter: GeneratedOfferLetterData) => void;
-  onReset: () => void;
+  onBack: () => void;
+  initialCollege?: string;
+  initialDomain?: string;
 }
 
 export const Step2DomainSelection: React.FC<Step2Props> = ({
   session,
   onSuccess,
-  onReset,
+  onBack,
+  initialCollege = '',
+  initialDomain = '',
 }) => {
-  const [collegeName, setCollegeName] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState('');
+  const [collegeName, setCollegeName] = useState(initialCollege);
+  const [selectedDomain, setSelectedDomain] = useState(initialDomain);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -67,6 +71,23 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
 
   return (
     <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-4 sm:p-8 transition-all">
+      {/* Top Navigation Row */}
+      <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-gray-100">
+        <button
+          type="button"
+          onClick={onBack}
+          disabled={loading}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-unai-purple transition-colors active:scale-95 disabled:opacity-50"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Step 1 (Edit Name & Email)</span>
+        </button>
+
+        <span className="text-[11px] font-semibold text-unai-purple bg-purple-50 px-2.5 py-0.5 rounded-full">
+          Step 2 of 3
+        </span>
+      </div>
+
       {/* Verified banner */}
       <div className="mb-5 sm:mb-6 p-3.5 sm:p-4 rounded-lg bg-green-50/80 border border-green-200/90 text-green-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center gap-2.5 sm:gap-3">
@@ -81,18 +102,16 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
           </div>
         </div>
         <button
-          onClick={onReset}
-          className="self-end sm:self-center text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1 font-medium underline-offset-2 hover:underline shrink-0"
+          type="button"
+          onClick={onBack}
+          className="self-end sm:self-center text-xs text-gray-600 hover:text-unai-purple flex items-center gap-1.5 font-semibold bg-white px-2.5 py-1 rounded-md border border-gray-200 transition-colors shadow-2xs shrink-0"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Change</span>
+          <span>Change Name/Email</span>
         </button>
       </div>
 
       <div className="mb-5 sm:mb-6">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-unai-purple text-xs font-semibold mb-2.5 sm:mb-3">
-          <span>Step 2 of 3</span>
-        </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
           College & Domain Selection
         </h2>
@@ -189,11 +208,22 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
           </div>
         </div>
 
-        <div className="pt-2">
+        {/* Action Buttons with Back and Submit */}
+        <div className="flex flex-col-reverse xs:flex-row items-center gap-3 pt-2">
+          <button
+            type="button"
+            onClick={onBack}
+            disabled={loading}
+            className="w-full xs:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-4 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-xs sm:text-sm font-semibold transition-colors min-h-[44px] active:scale-[0.99] disabled:opacity-50"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Step 1</span>
+          </button>
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-unai-purple text-white text-sm font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-xs active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed min-h-[44px]"
+            className="flex-1 w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-unai-purple text-white text-xs sm:text-sm font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-xs active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed min-h-[44px]"
           >
             {loading ? (
               <>

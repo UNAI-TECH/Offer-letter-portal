@@ -43,6 +43,12 @@ export const App: React.FC = () => {
   const [generatedLetter, setGeneratedLetter] = useState<GeneratedOfferLetterData | null>(null);
   const [deadlinePassed, setDeadlinePassed] = useState<boolean>(isOfferLetterDeadlinePassed());
 
+  // Preserved input state so Back buttons retain user values
+  const [savedName, setSavedName] = useState<string>('');
+  const [savedEmail, setSavedEmail] = useState<string>('');
+  const [savedCollege, setSavedCollege] = useState<string>('');
+  const [savedDomain, setSavedDomain] = useState<string>('');
+
   // Listen to navigation events (e.g. user types /adminconsole or changes hash)
   useEffect(() => {
     const handleLocationChange = () => {
@@ -79,15 +85,24 @@ export const App: React.FC = () => {
 
   const handleVerified = (verifiedSession: VerifiedParticipantSession) => {
     setSession(verifiedSession);
+    setSavedName(verifiedSession.verifiedName);
+    setSavedEmail(verifiedSession.registeredEmail);
     setGeneratedLetter(null);
   };
 
   const handleGenerationSuccess = (letter: GeneratedOfferLetterData) => {
     setGeneratedLetter(letter);
+    setSavedCollege(letter.collegeName);
+    setSavedDomain(letter.domainName);
   };
 
-  const handleReset = () => {
+  // Back Navigation Handlers
+  const handleBackToStep1 = () => {
     setSession(null);
+    setGeneratedLetter(null);
+  };
+
+  const handleBackToStep2 = () => {
     setGeneratedLetter(null);
   };
 
@@ -148,14 +163,21 @@ export const App: React.FC = () => {
               </div>
             )}
 
-            {/* Responsive Stepper Progress Bar */}
+            {/* Responsive Stepper Progress Bar (Interactive for Completed Steps) */}
             <div className="max-w-xl mx-auto px-1">
               <div className="flex items-center justify-between text-xs font-medium text-gray-500">
-                {/* Step 1 */}
-                <div
-                  className={`flex items-center gap-1.5 shrink-0 ${
-                    !session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
-                  }`}
+                {/* Step 1 Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (session && !generatedLetter) handleBackToStep1();
+                    if (generatedLetter && (generatedLetter.downloadCount || 0) < 1) handleBackToStep1();
+                  }}
+                  disabled={!session || ((generatedLetter?.downloadCount || 0) >= 1)}
+                  className={`flex items-center gap-1.5 shrink-0 transition-opacity ${
+                    session && ((generatedLetter?.downloadCount || 0) < 1) ? 'cursor-pointer hover:opacity-80' : ''
+                  } ${!session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'}`}
+                  title={session && ((generatedLetter?.downloadCount || 0) < 1) ? 'Click to return to Step 1' : ''}
                 >
                   <span
                     className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
@@ -170,15 +192,21 @@ export const App: React.FC = () => {
                   </span>
                   <span className="hidden sm:inline">Identity Verification</span>
                   <span className="sm:hidden text-[11px]">Identity</span>
-                </div>
+                </button>
 
                 <div className="flex-1 mx-2 sm:mx-4 h-px bg-gray-200" />
 
-                {/* Step 2 */}
-                <div
-                  className={`flex items-center gap-1.5 shrink-0 ${
-                    session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'
-                  }`}
+                {/* Step 2 Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (generatedLetter && (generatedLetter.downloadCount || 0) < 1) handleBackToStep2();
+                  }}
+                  disabled={!generatedLetter || ((generatedLetter.downloadCount || 0) >= 1)}
+                  className={`flex items-center gap-1.5 shrink-0 transition-opacity ${
+                    generatedLetter && (generatedLetter.downloadCount || 0) < 1 ? 'cursor-pointer hover:opacity-80' : ''
+                  } ${session && !generatedLetter ? 'text-unai-purple font-bold' : 'text-gray-400'}`}
+                  title={generatedLetter && (generatedLetter.downloadCount || 0) < 1 ? 'Click to return to Step 2' : ''}
                 >
                   <span
                     className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold ${
@@ -193,7 +221,7 @@ export const App: React.FC = () => {
                   </span>
                   <span className="hidden sm:inline">Domain Authorization</span>
                   <span className="sm:hidden text-[11px]">Domain</span>
-                </div>
+                </button>
 
                 <div className="flex-1 mx-2 sm:mx-4 h-px bg-gray-200" />
 
@@ -233,21 +261,28 @@ export const App: React.FC = () => {
               ) : (
                 <>
                   {!session && (
-                    <Step1Verification onVerified={handleVerified} />
+                    <Step1Verification
+                      onVerified={handleVerified}
+                      initialName={savedName}
+                      initialEmail={savedEmail}
+                    />
                   )}
 
                   {session && !generatedLetter && (
                     <Step2DomainSelection
                       session={session}
                       onSuccess={handleGenerationSuccess}
-                      onReset={handleReset}
+                      onBack={handleBackToStep1}
+                      initialCollege={savedCollege}
+                      initialDomain={savedDomain}
                     />
                   )}
 
                   {generatedLetter && (
                     <Step3DownloadOfferLetter
                       offerLetter={generatedLetter}
-                      onReset={handleReset}
+                      onBackToStep2={handleBackToStep2}
+                      onBackToStep1={handleBackToStep1}
                     />
                   )}
                 </>

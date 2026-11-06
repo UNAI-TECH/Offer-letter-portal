@@ -5,11 +5,17 @@ import type { VerifiedParticipantSession } from '../types';
 
 interface Step1Props {
   onVerified: (session: VerifiedParticipantSession) => void;
+  initialName?: string;
+  initialEmail?: string;
 }
 
-export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
+export const Step1Verification: React.FC<Step1Props> = ({
+  onVerified,
+  initialName = '',
+  initialEmail = '',
+}) => {
+  const [fullName, setFullName] = useState(initialName);
+  const [email, setEmail] = useState(initialEmail);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -38,7 +44,7 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
     } catch (err: any) {
       setErrorMessage(
         err.message ||
-          "Sorry! We couldn't verify your registration. Please check your registered name and email address."
+          "Sorry! We couldn't verify your registration. Please check your registered email address."
       );
     } finally {
       setLoading(false);
@@ -55,7 +61,7 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
           Verify Your Registration
         </h2>
         <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">
-          Please enter your official registered name and email address as used during enrollment in the UNAI TECH Virtual Internship Program.
+          Please enter your official registered email and full name as you wish it to appear on your UNAI TECH offer letter.
         </p>
       </div>
 

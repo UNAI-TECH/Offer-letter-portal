@@ -7,22 +7,24 @@ import {
   Building,
   Briefcase,
   Hash,
-  RotateCcw,
   ShieldCheck,
   AlertTriangle,
   Lock,
+  ArrowLeft,
 } from 'lucide-react';
 import type { GeneratedOfferLetterData } from '../types';
 import { api } from '../services/api';
 
 interface Step3Props {
   offerLetter: GeneratedOfferLetterData;
-  onReset: () => void;
+  onBackToStep2: () => void;
+  onBackToStep1: () => void;
 }
 
 export const Step3DownloadOfferLetter: React.FC<Step3Props> = ({
   offerLetter,
-  onReset,
+  onBackToStep2,
+  onBackToStep1,
 }) => {
   const [downloading, setDownloading] = useState(false);
   const [hasDownloaded, setHasDownloaded] = useState((offerLetter.downloadCount || 0) >= 1);
@@ -47,6 +49,30 @@ export const Step3DownloadOfferLetter: React.FC<Step3Props> = ({
 
   return (
     <div className="bg-white rounded-xl border border-gray-200/90 shadow-sm p-4 sm:p-8 transition-all">
+      {/* Top Navigation Row (Enabled before download) */}
+      <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-gray-100">
+        <button
+          type="button"
+          onClick={onBackToStep2}
+          disabled={hasDownloaded}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-unai-purple transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          title={hasDownloaded ? 'Download quota already consumed' : 'Go back to edit college and domain'}
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Step 2 (College & Domain)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={onBackToStep1}
+          disabled={hasDownloaded}
+          className="text-xs text-gray-500 hover:text-unai-purple underline underline-offset-2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          title={hasDownloaded ? 'Download quota already consumed' : 'Go back to edit your name or email'}
+        >
+          Edit Name & Email
+        </button>
+      </div>
+
       {/* Success banner */}
       <div className="text-center pb-5 sm:pb-6 border-b border-gray-100">
         <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-50 flex items-center justify-center text-unai-purple mb-2.5 sm:mb-3">
@@ -139,12 +165,12 @@ export const Step3DownloadOfferLetter: React.FC<Step3Props> = ({
           <p className="text-gray-600 text-[11px] sm:text-xs leading-relaxed">
             {hasDownloaded
               ? `You have downloaded your official offer letter for ${offerLetter.domainName}. Under UNAI TECH program policy, each verified email address can download only ONE offer letter in total across all registered domains. You cannot generate or download any other offer letter under any other domain. Please store your PDF safely.`
-              : 'Each verified participant can download ONLY ONE offer letter across all registered domains. If you are registered in multiple domains, choosing and downloading this offer letter will permanently consume your allowance; you will NOT be able to download an offer letter for any other domain.'}
+              : 'Each verified participant can download ONLY ONE offer letter across all registered domains. If you need to make any corrections to your name, college, or domain, click "Back" before downloading.'}
           </p>
         </div>
       </div>
 
-      {/* Primary Download Action Button */}
+      {/* Primary Download Action Button with Back Button */}
       <div className="space-y-3">
         {hasDownloaded ? (
           <div className="space-y-2">
@@ -157,25 +183,27 @@ export const Step3DownloadOfferLetter: React.FC<Step3Props> = ({
             </p>
           </div>
         ) : (
-          <>
+          <div className="flex flex-col-reverse xs:flex-row items-center gap-3">
             <button
+              type="button"
+              onClick={onBackToStep2}
+              disabled={downloading}
+              className="w-full xs:w-auto inline-flex items-center justify-center gap-1.5 py-3.5 px-4 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-xs sm:text-sm font-semibold transition-colors min-h-[48px] active:scale-[0.99]"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back / Edit</span>
+            </button>
+
+            <button
+              type="button"
               onClick={handleDownload}
               disabled={downloading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg bg-unai-purple text-white text-sm sm:text-base font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-md active:scale-[0.99] min-h-[48px]"
+              className="flex-1 w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg bg-unai-purple text-white text-sm sm:text-base font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-md active:scale-[0.99] min-h-[48px]"
             >
               <Download className="w-5 h-5 shrink-0" />
               <span>{downloading ? 'Downloading Official PDF...' : 'Download Official Offer Letter (PDF)'}</span>
             </button>
-
-            {/* Change domain before downloading */}
-            <button
-              onClick={onReset}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-lg text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Change Selected Domain (Before Downloading)</span>
-            </button>
-          </>
+          </div>
         )}
       </div>
 
