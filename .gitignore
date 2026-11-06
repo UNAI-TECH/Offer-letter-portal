@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.production
+*.env
+
+# Confidential source files
+source-files/
+*.xlsx
+*.xls
+
+# Test artifacts and generated media
+docs/*.pdf
+docs/*.png
+docs/test_cases/
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# Supabase local generated / internal
+.branches/
+.temp/
+

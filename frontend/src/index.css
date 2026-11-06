@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#fcfcfd] text-[#383535] font-sans antialiased selection:bg-[#4a279b]/15 selection:text-[#4a279b];
+  }
+}
+
+.unai-gradient {
+  background: linear-gradient(135deg, #4a279b 0%, #2e02ae 100%);
+}
