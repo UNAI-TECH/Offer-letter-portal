@@ -184,6 +184,9 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
           <p className="mt-1 text-[11px] sm:text-xs text-gray-500">
             Must match your domain registration from the original program Excel records.
           </p>
+          <div className="mt-2 p-2.5 rounded-lg bg-amber-50 border border-amber-200/80 text-[11px] sm:text-xs text-amber-900 leading-relaxed">
+            <strong>Important Policy:</strong> Each participant can download only <strong>ONE</strong> offer letter in total. If you registered across multiple domains, choosing and downloading one will lock out all other domains.
+          </div>
         </div>
 
         <div className="pt-2">

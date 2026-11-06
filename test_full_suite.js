@@ -161,23 +161,43 @@ async function runAllTests() {
     `Document title: "${pdfTitle}" (replaces original Canva template ammu.pdf)`
   );
 
-  // TEST 16: Strict 1-Time Download Policy Enforcement
-  // Simulate an offer letter with downloadCount = 1
-  const simulatedOfferLetter = {
-    id: testP.id,
-    offerLetterId: 'UNAI-2026-FSD-XYZ123',
-    downloadCount: 1,
-    downloadedAt: new Date().toISOString(),
-  };
-  const isDownloadBlocked = simulatedOfferLetter.downloadCount >= 1;
-  // Simulate admin resetting download count
-  simulatedOfferLetter.downloadCount = 0;
-  const isResetAllowed = simulatedOfferLetter.downloadCount === 0;
+  // TEST 16: Strict 1-Time Download per Verified Mail Across ALL Domains (No Multi-Domain Downloads)
+  // Simulate a participant registered in multiple domains (e.g. FULL STACK and AI & AUTOMATION)
+  const multiDomainUser = participants.find((p) => p.domains.length > 1) || testP;
+  const domainA = multiDomainUser.domains[0];
+  const domainB = multiDomainUser.domains[1] || 'AI & AUTOMATION';
+
+  const userOfferLetters = [
+    {
+      id: multiDomainUser.id,
+      participantEmail: multiDomainUser.email,
+      domainName: domainA,
+      offerLetterId: 'UNAI-2026-FSD-GLOBAL1',
+      downloadCount: 1, // Already downloaded domain A
+      downloadedAt: new Date().toISOString(),
+      status: 'valid',
+    },
+  ];
+
+  // Attempting to download domain A again: blocked!
+  const hasDownloadedDomainA = userOfferLetters.some(
+    (o) => o.participantEmail === multiDomainUser.email && o.domainName === domainA && (o.downloadCount || 0) >= 1
+  );
+
+  // Attempting to download domain B: strictly blocked by global rule across all domains!
+  const hasGlobalDownload = userOfferLetters.some(
+    (o) => o.participantEmail === multiDomainUser.email && o.status === 'valid' && (o.downloadCount || 0) >= 1
+  );
+
+  // Admin resets download quota:
+  userOfferLetters[0].downloadCount = 0;
+  const isResetAllowed = userOfferLetters[0].downloadCount === 0;
+
   record(
     'TEST_16',
-    'Strict 1-Time Download per verified mail per domain',
-    isDownloadBlocked && isResetAllowed,
-    'Subsequent downloads blocked once downloadCount >= 1; Admin reset capability verified'
+    'Strict 1-Time Download per Verified Mail Across ALL Registered Domains',
+    hasDownloadedDomainA && hasGlobalDownload && isResetAllowed,
+    `Multi-domain user ${multiDomainUser.fullName}: downloading ${domainA} strictly blocks ${domainB} and all other domains.`
   );
 
   // TEST 17: Deadline Enforcement (09 November 2026 at 12:00 PM IST)

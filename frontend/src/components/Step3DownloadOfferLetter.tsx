@@ -133,13 +133,13 @@ export const Step3DownloadOfferLetter: React.FC<Step3Props> = ({
         <div>
           <p className="font-semibold mb-0.5">
             {hasDownloaded
-              ? 'Download Quota Consumed (Single Download Enforced)'
-              : 'Important Single-Use Download Policy'}
+              ? 'Global Download Quota Consumed (Single Download Across All Domains)'
+              : 'Strict Global 1-Offer Letter Policy'}
           </p>
-          <p className="text-gray-600 text-[11px] sm:text-xs">
+          <p className="text-gray-600 text-[11px] sm:text-xs leading-relaxed">
             {hasDownloaded
-              ? 'You have downloaded your official offer letter for this domain. Under UNAI TECH program policy, each verified email address can download only ONE copy per domain. Save your PDF securely.'
-              : 'Each verified participant is permitted only ONE download per registered domain. Please ensure you save your PDF to a secure location on your device.'}
+              ? `You have downloaded your official offer letter for ${offerLetter.domainName}. Under UNAI TECH program policy, each verified email address can download only ONE offer letter in total across all registered domains. You cannot generate or download any other offer letter under any other domain. Please store your PDF safely.`
+              : 'Each verified participant can download ONLY ONE offer letter across all registered domains. If you are registered in multiple domains, choosing and downloading this offer letter will permanently consume your allowance; you will NOT be able to download an offer letter for any other domain.'}
           </p>
         </div>
       </div>
@@ -147,29 +147,36 @@ export const Step3DownloadOfferLetter: React.FC<Step3Props> = ({
       {/* Primary Download Action Button */}
       <div className="space-y-3">
         {hasDownloaded ? (
-          <div className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-gray-100 text-gray-500 border border-gray-200 text-xs sm:text-sm font-semibold cursor-not-allowed">
-            <Lock className="w-4 h-4" />
-            <span>Offer Letter Downloaded (1/1 Quota Used)</span>
+          <div className="space-y-2">
+            <div className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-gray-100 text-gray-500 border border-gray-200 text-xs sm:text-sm font-semibold cursor-not-allowed">
+              <Lock className="w-4 h-4" />
+              <span>Offer Letter Downloaded (Global 1/1 Quota Used)</span>
+            </div>
+            <p className="text-center text-[11px] text-gray-500">
+              Download finalized. Need assistance? Please reach out to the contact administrator below.
+            </p>
           </div>
         ) : (
-          <button
-            onClick={handleDownload}
-            disabled={downloading}
-            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg bg-unai-purple text-white text-sm sm:text-base font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-md active:scale-[0.99] min-h-[48px]"
-          >
-            <Download className="w-5 h-5 shrink-0" />
-            <span>{downloading ? 'Downloading Official PDF...' : 'Download Official Offer Letter (PDF)'}</span>
-          </button>
-        )}
+          <>
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg bg-unai-purple text-white text-sm sm:text-base font-semibold hover:bg-unai-purple-dark focus:outline-none focus:ring-4 focus:ring-unai-purple/20 transition-all shadow-md active:scale-[0.99] min-h-[48px]"
+            >
+              <Download className="w-5 h-5 shrink-0" />
+              <span>{downloading ? 'Downloading Official PDF...' : 'Download Official Offer Letter (PDF)'}</span>
+            </button>
 
-        {/* Generate for another domain if multi-domain participant */}
-        <button
-          onClick={onReset}
-          className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-lg text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Verify or Generate for Another Registered Domain</span>
-        </button>
+            {/* Change domain before downloading */}
+            <button
+              onClick={onReset}
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-lg text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Change Selected Domain (Before Downloading)</span>
+            </button>
+          </>
+        )}
       </div>
 
       <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-gray-100 text-center">

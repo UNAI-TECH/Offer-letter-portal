@@ -137,7 +137,36 @@ serve(async (req: Request) => {
       );
     }
 
-    // 5. Idempotency & Single Download Check
+    // 5. STRICT GLOBAL 1-DOWNLOAD LIMIT ACROSS ALL REGISTERED DOMAINS
+    const { data: globalConsumedOffer } = await supabase
+      .from('offer_letters')
+      .select('id, offer_letter_id, domain_id, download_count, downloaded_at')
+      .eq('participant_id', participant.id)
+      .eq('status', 'valid')
+      .gte('download_count', 1)
+      .maybeSingle();
+
+    if (globalConsumedOffer) {
+      await supabase.from('audit_logs').insert({
+        participant_id: participant.id,
+        action: 'DOWNLOAD_LIMIT_BLOCKED_GLOBAL',
+        metadata: {
+          offer_letter_id: globalConsumedOffer.offer_letter_id,
+          attempted_domain: domainRecord.domain_name,
+          downloaded_at: globalConsumedOffer.downloaded_at,
+        },
+      });
+
+      return new Response(
+        JSON.stringify({
+          error:
+            'You have already downloaded an official offer letter. Under UNAI TECH program policy, each participant is permitted only ONE offer letter download in total across all registered domains. Multi-domain downloads are strictly disallowed.',
+        }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 6. Idempotency Check for Selected Domain
     const { data: existingOffer } = await supabase
       .from('offer_letters')
       .select('id, offer_letter_id, college_name, generated_file_path, issue_date, status, download_count')

@@ -111,6 +111,35 @@ serve(async (req: Request) => {
       });
     }
 
+    // STRICT GLOBAL SINGLE DOWNLOAD CHECK:
+    // If participant has already downloaded ANY offer letter under ANY domain, forbid new verification!
+    const { data: alreadyDownloaded } = await supabase
+      .from('offer_letters')
+      .select('id, offer_letter_id, download_count, downloaded_at')
+      .eq('participant_id', participant.id)
+      .eq('status', 'valid')
+      .gte('download_count', 1)
+      .maybeSingle();
+
+    if (alreadyDownloaded) {
+      await supabase.from('audit_logs').insert({
+        participant_id: participant.id,
+        action: 'DOWNLOAD_LIMIT_BLOCKED_GLOBAL',
+        metadata: {
+          offer_letter_id: alreadyDownloaded.offer_letter_id,
+          downloaded_at: alreadyDownloaded.downloaded_at,
+        },
+      });
+
+      return new Response(
+        JSON.stringify({
+          error:
+            'You have already downloaded your official offer letter. Under UNAI TECH program policy, each participant is permitted only ONE offer letter download across all registered domains.',
+        }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Generate random opaque session token
     const sessionToken = generateSecureToken(32);
     const tokenHash = await sha256Hex(sessionToken);

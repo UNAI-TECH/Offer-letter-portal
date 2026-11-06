@@ -143,7 +143,7 @@ export const App: React.FC = () => {
                   <span>Important: Generation window closes on <strong>09 November 2026 at 12:00 PM IST</strong>.</span>
                 </div>
                 <span className="self-start sm:self-center px-2 py-0.5 rounded bg-white text-unai-purple font-semibold border border-purple-200 text-[11px] whitespace-nowrap">
-                  1 Download per Domain
+                  1 Download per Verified Email (All Domains)
                 </span>
               </div>
             )}

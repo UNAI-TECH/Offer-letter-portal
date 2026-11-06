@@ -329,6 +329,31 @@ export const api = {
       throw new Error(GENERIC_VERIFY_FAILURE);
     }
 
+    // STRICT GLOBAL SINGLE-DOWNLOAD CHECK:
+    // If this verified participant has already downloaded ANY offer letter under ANY domain, block immediately!
+    const alreadyDownloadedOffer = storage.getOfferLetters().find(
+      (o) =>
+        o.participantEmail.toLowerCase() === participant.email.toLowerCase() &&
+        o.status === 'valid' &&
+        (o.downloadCount || 0) >= 1
+    );
+
+    if (alreadyDownloadedOffer) {
+      storage.logAudit(
+        'DOWNLOAD_LIMIT_BLOCKED_GLOBAL',
+        'warning',
+        {
+          offerLetterId: alreadyDownloadedOffer.offerLetterId,
+          domain: alreadyDownloadedOffer.domainName,
+          downloadedAt: alreadyDownloadedOffer.downloadedAt,
+        },
+        participant.email
+      );
+      throw new Error(
+        `You have already downloaded your official offer letter for ${alreadyDownloadedOffer.domainName} on ${new Date(alreadyDownloadedOffer.downloadedAt || '').toLocaleDateString()}. Under UNAI TECH program policy, each verified email address can download only ONE offer letter in total across all registered domains. Multi-domain downloads are strictly not allowed.`
+      );
+    }
+
     // Generate random opaque session token
     const rawToken = generateRandomToken(32);
     const tokenHash = await sha256Hex(rawToken);
@@ -434,10 +459,36 @@ export const api = {
     const cleanCollege = collegeName.trim();
     const fileName = `UNAI_TECH_Offer_Letter_${sanitizeFilename(participant.fullName)}.pdf`;
 
-    // 4. Idempotency & Single-Download check:
+    // 4. CRITICAL: STRICT GLOBAL 1-DOWNLOAD LIMIT ACROSS ALL DOMAINS:
+    // If participant has already downloaded an offer letter for ANY domain, strictly forbid generation or re-download of any other domain!
+    const anyDownloadedOffer = storage.getOfferLetters().find(
+      (o) =>
+        o.participantEmail.toLowerCase() === participant.email.toLowerCase() &&
+        o.status === 'valid' &&
+        (o.downloadCount || 0) >= 1
+    );
+
+    if (anyDownloadedOffer) {
+      storage.logAudit(
+        'DOWNLOAD_LIMIT_BLOCKED_GLOBAL',
+        'warning',
+        {
+          offerLetterId: anyDownloadedOffer.offerLetterId,
+          previousDomain: anyDownloadedOffer.domainName,
+          attemptedDomain: cleanDomain,
+          downloadedAt: anyDownloadedOffer.downloadedAt,
+        },
+        participant.email
+      );
+      throw new Error(
+        `You have already downloaded your official offer letter for ${anyDownloadedOffer.domainName} on ${new Date(anyDownloadedOffer.downloadedAt || '').toLocaleDateString()}. Under UNAI TECH program policy, each participant is permitted only ONE offer letter download across all registered domains. Multi-domain downloads are strictly not allowed.`
+      );
+    }
+
+    // 5. Existing letter for this specific domain (before download consumption):
     const existing = storage.getOfferLetters().find(
       (o) =>
-        o.participantEmail === participant.email &&
+        o.participantEmail.toLowerCase() === participant.email.toLowerCase() &&
         o.domainName.toLowerCase() === cleanDomain.toLowerCase() &&
         o.status === 'valid'
     );
