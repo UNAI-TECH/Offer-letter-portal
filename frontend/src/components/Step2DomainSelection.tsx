@@ -113,7 +113,7 @@ export const Step2DomainSelection: React.FC<Step2Props> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-lg bg-gray-50 border border-gray-200">
           <div>
             <label className="block text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
-              Verified Full Name
+              Offer Letter Name (To Be Printed)
             </label>
             <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-900 truncate">
               <Lock className="w-3.5 h-3.5 text-gray-400 shrink-0" />

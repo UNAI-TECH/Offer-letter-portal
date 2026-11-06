@@ -93,15 +93,16 @@ serve(async (req: Request) => {
       });
     }
 
-    // Check if participant exists and name matches
-    if (!participant || !checkNameMatch(fullName, participant.full_name)) {
+    // Check if participant exists by registered email
+    if (!participant) {
       // Record failed verification in audit logs
       await supabase.from('audit_logs').insert({
-        participant_id: participant ? participant.id : null,
+        participant_id: null,
         action: 'PARTICIPANT_VERIFICATION_FAILED',
         metadata: {
           submitted_name: fullName.trim(),
           submitted_email: normalizedEmail,
+          reason: 'Email not found in registered roster',
         },
       });
 
@@ -180,7 +181,7 @@ serve(async (req: Request) => {
         success: true,
         message: 'Registration Verified Successfully!',
         sessionToken,
-        verifiedName: participant.full_name,
+        verifiedName: fullName.trim(),
         registeredEmail: participant.email,
       }),
       {

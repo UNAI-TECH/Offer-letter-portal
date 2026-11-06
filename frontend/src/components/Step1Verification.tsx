@@ -69,7 +69,7 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5" noValidate>
         <div>
           <label htmlFor="fullName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
-            Full Name <span className="text-red-500">*</span>
+            Full Name (To be printed on Offer Letter) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
@@ -88,7 +88,7 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
             />
           </div>
           <p className="mt-1 text-[11px] sm:text-xs text-gray-500">
-            Enter your name as registered in the official program roster.
+            Enter your official full name with initials as you want it printed on your offer letter.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export const Step1Verification: React.FC<Step1Props> = ({ onVerified }) => {
             />
           </div>
           <p className="mt-1 text-[11px] sm:text-xs text-gray-500">
-            Case-insensitive validation against imported classroom rosters.
+            Eligibility is verified exclusively against your registered email in the official program database.
           </p>
         </div>
 

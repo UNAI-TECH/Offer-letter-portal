@@ -18,21 +18,10 @@ export function isOfferLetterDeadlinePassed(): boolean {
 }
 
 const GENERIC_VERIFY_FAILURE =
-  "Sorry! We couldn't verify your registration. Please check your registered name and email address.";
+  "Sorry! We couldn't verify your registration. Please check your registered email address.";
 
 function normalizeText(text: string): string {
   return (text || '').trim().toLowerCase().replace(/\s+/g, ' ');
-}
-
-function checkNameMatch(inputName: string, registeredName: string): boolean {
-  const normInput = normalizeText(inputName);
-  const normDb = normalizeText(registeredName);
-  if (normInput === normDb) return true;
-
-  // Check word permutation (e.g., First Last vs Last First)
-  const inputWords = normInput.split(' ').sort().join(' ');
-  const dbWords = normDb.split(' ').sort().join(' ');
-  return inputWords === dbWords;
 }
 
 async function sha256Hex(str: string): Promise<string> {
@@ -59,7 +48,7 @@ function sanitizeFilename(name: string): string {
 // In-memory persistent state (synced with localStorage)
 class PortalStorageManager {
   private participants: ParticipantRecord[] = [];
-  private sessions: Map<string, { participantId: string; expiresAt: number }> = new Map();
+  private sessions: Map<string, { participantId: string; enteredName?: string; expiresAt: number }> = new Map();
   private offerLetters: OfferLetterRecord[] = [];
   private auditLogs: AuditLogEntry[] = [];
   private importBatches: ImportBatchSummary[] = [];
@@ -181,11 +170,11 @@ class PortalStorageManager {
     return this.participants.find((p) => p.id === id && p.registrationStatus === 'active');
   }
 
-  setSession(tokenHash: string, participantId: string, expiresAt: number) {
-    this.sessions.set(tokenHash, { participantId, expiresAt });
+  setSession(tokenHash: string, participantId: string, expiresAt: number, enteredName?: string) {
+    this.sessions.set(tokenHash, { participantId, enteredName, expiresAt });
   }
 
-  getSession(tokenHash: string): { participantId: string; expiresAt: number } | undefined {
+  getSession(tokenHash: string): { participantId: string; enteredName?: string; expiresAt: number } | undefined {
     const s = this.sessions.get(tokenHash);
     if (!s) return undefined;
     if (Date.now() > s.expiresAt) {
@@ -318,15 +307,20 @@ export const api = {
     }
 
     // Backend participant verification against imported database
+    // STRICT EMAIL-ONLY VERIFICATION:
+    // Name is not compared, allowing participants to enter their full original name / initials
+    // as they wish it to appear on their official offer letter.
     const participant = storage.findParticipantByEmail(email);
-    if (!participant || !checkNameMatch(fullName, participant.fullName)) {
+    if (!participant) {
       storage.logAudit(
         'PARTICIPANT_VERIFICATION_FAILED',
         'warning',
-        { enteredName: fullName.trim(), enteredEmail: email.trim() },
+        { enteredName: fullName.trim(), enteredEmail: email.trim(), reason: 'Email not registered' },
         email.trim()
       );
-      throw new Error(GENERIC_VERIFY_FAILURE);
+      throw new Error(
+        "Sorry! We couldn't verify your registration. Please check your registered email address."
+      );
     }
 
     // STRICT GLOBAL SINGLE-DOWNLOAD CHECK:
@@ -350,7 +344,7 @@ export const api = {
         participant.email
       );
       throw new Error(
-        `You have already downloaded your official offer letter for ${alreadyDownloadedOffer.domainName} on ${new Date(alreadyDownloadedOffer.downloadedAt || '').toLocaleDateString()}. Under UNAI TECH program policy, each verified email address can download only ONE offer letter in total across all registered domains. Multi-domain downloads are strictly not allowed.`
+        `You have already downloaded your official offer letter for ${alreadyDownloadedOffer.domainName} on ${new Date(alreadyDownloadedOffer.downloadedAt || '').toLocaleDateString()}. Under UNAI TECH program policy, each participant is permitted only ONE offer letter download across all registered domains. Multi-domain downloads are strictly not allowed.`
       );
     }
 
@@ -358,18 +352,19 @@ export const api = {
     const rawToken = generateRandomToken(32);
     const tokenHash = await sha256Hex(rawToken);
     const expiresAt = Date.now() + 15 * 60 * 1000;
+    const printName = fullName.trim();
 
-    storage.setSession(tokenHash, participant.id, expiresAt);
+    storage.setSession(tokenHash, participant.id, expiresAt, printName);
     storage.logAudit(
       'PARTICIPANT_VERIFIED_SUCCESS',
       'success',
-      { verifiedName: participant.fullName },
+      { verifiedPrintName: printName, originalRosterName: participant.fullName },
       participant.email
     );
 
     return {
       sessionToken: rawToken,
-      verifiedName: participant.fullName,
+      verifiedName: printName,
       registeredEmail: participant.email,
       expiresAt: new Date(expiresAt).toISOString(),
     };
@@ -456,8 +451,9 @@ export const api = {
       );
     }
 
+    const participantPrintName = session.enteredName || participant.fullName;
     const cleanCollege = collegeName.trim();
-    const fileName = `UNAI_TECH_Offer_Letter_${sanitizeFilename(participant.fullName)}.pdf`;
+    const fileName = `UNAI_TECH_Offer_Letter_${sanitizeFilename(participantPrintName)}.pdf`;
 
     // 4. CRITICAL: STRICT GLOBAL 1-DOWNLOAD LIMIT ACROSS ALL DOMAINS:
     // If participant has already downloaded an offer letter for ANY domain, strictly forbid generation or re-download of any other domain!
@@ -494,7 +490,6 @@ export const api = {
     );
 
     if (existing) {
-      // ENFORCE STRICT SINGLE-DOWNLOAD RESTRICTION
       if ((existing.downloadCount || 0) >= 1) {
         storage.logAudit(
           'DOWNLOAD_LIMIT_BLOCKED',
@@ -507,7 +502,7 @@ export const api = {
           participant.email
         );
         throw new Error(
-          `You have already downloaded your official offer letter for ${cleanDomain} on ${new Date(existing.downloadedAt || '').toLocaleDateString()}. In accordance with UNAI TECH program policy, each participant is permitted only ONE download per registered domain. If you require assistance, please contact UNAI TECH administration.`
+          `You have already downloaded your official offer letter for ${cleanDomain} on ${new Date(existing.downloadedAt || '').toLocaleDateString()}. In accordance with UNAI TECH program policy, each participant is permitted only ONE download across all registered domains. If you require assistance, please contact UNAI TECH administration.`
         );
       }
 
@@ -515,7 +510,7 @@ export const api = {
         const downloadUrl = URL.createObjectURL(existing.pdfBlob);
         return {
           offerLetterId: existing.offerLetterId,
-          participantName: participant.fullName,
+          participantName: participantPrintName,
           collegeName: existing.collegeName,
           domainName: existing.domainName,
           issueDate: '01 November 2026',
@@ -531,7 +526,7 @@ export const api = {
 
     // 5. Generate pixel-perfect personalized PDF using pdf-lib overlay engine
     const pdfBytes = await generateOfferLetterPdf({
-      participantName: participant.fullName,
+      participantName: participantPrintName,
       collegeName: cleanCollege,
       domainName: cleanDomain,
       issueDate: '01 November 2026',
@@ -553,7 +548,7 @@ export const api = {
     const record: OfferLetterRecord = {
       id: participant.id,
       offerLetterId,
-      participantName: participant.fullName,
+      participantName: participantPrintName,
       participantEmail: participant.email,
       collegeName: cleanCollege,
       domainName: cleanDomain,
@@ -574,13 +569,14 @@ export const api = {
         offerLetterId,
         domain: cleanDomain,
         collegeName: cleanCollege,
+        printedName: participantPrintName,
       },
       participant.email
     );
 
     return {
       offerLetterId,
-      participantName: participant.fullName,
+      participantName: participantPrintName,
       collegeName: cleanCollege,
       domainName: cleanDomain,
       issueDate: '01 November 2026',

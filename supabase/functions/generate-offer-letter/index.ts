@@ -36,7 +36,7 @@ serve(async (req: Request) => {
       );
     }
 
-    const { sessionToken, collegeName, selectedDomain } = await req.json();
+    const { sessionToken, collegeName, selectedDomain, participantName } = await req.json();
 
     if (!sessionToken || typeof sessionToken !== 'string') {
       return new Response(
@@ -175,8 +175,12 @@ serve(async (req: Request) => {
       .eq('status', 'valid')
       .maybeSingle();
 
+    const printParticipantName = (participantName && typeof participantName === 'string' && participantName.trim())
+      ? participantName.trim()
+      : participant.full_name;
+
     const cleanCollegeName = collegeName.trim();
-    const downloadFilename = `UNAI_TECH_Offer_Letter_${sanitizeFilename(participant.full_name)}.pdf`;
+    const downloadFilename = `UNAI_TECH_Offer_Letter_${sanitizeFilename(printParticipantName)}.pdf`;
 
     if (existingOffer) {
       if ((existingOffer.download_count || 0) >= 1) {
@@ -201,7 +205,7 @@ serve(async (req: Request) => {
             success: true,
             isExisting: true,
             offerLetterId: existingOffer.offer_letter_id,
-            participantName: participant.full_name,
+            participantName: printParticipantName,
             collegeName: existingOffer.college_name,
             domainName: domainRecord.domain_name,
             issueDate: '01 November 2026',
@@ -249,7 +253,7 @@ serve(async (req: Request) => {
     // 7. Apply pixel-perfect dynamic replacements
     const generatedPdfBytes = await overlayOfferLetterPdf({
       templateBuffer: templateBytes,
-      participantName: participant.full_name,
+      participantName: printParticipantName,
       collegeName: cleanCollegeName,
       domainName: domainRecord.domain_name,
       issueDate: '01 November 2026',
@@ -317,7 +321,7 @@ serve(async (req: Request) => {
       JSON.stringify({
         success: true,
         offerLetterId,
-        participantName: participant.full_name,
+        participantName: printParticipantName,
         collegeName: cleanCollegeName,
         domainName: domainRecord.domain_name,
         issueDate: '01 November 2026',

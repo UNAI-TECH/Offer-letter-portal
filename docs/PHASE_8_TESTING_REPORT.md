@@ -1,6 +1,6 @@
 # UNAI TECH – Phase 8 Comprehensive Quality Assurance Report
 
-**Execution Date:** 2026-11-06T08:09:48.383Z
+**Execution Date:** 2026-11-06T08:34:50.576Z
 **Total Test Cases:** 19
 **Passed:** 19 | **Failed:** 0
 
@@ -11,13 +11,13 @@
 | `TEST_3` | Valid App Development participant | ✅ PASSED | AMMAN KUMAR D (amman100d@gmail.com) |
 | `TEST_4` | Valid Web Development participant | ✅ PASSED | AMMAN KUMAR D (amman100d@gmail.com) |
 | `TEST_5` | Participant registered in multiple domain files | ✅ PASSED | AMMAN KUMAR D registered in: FULL STACK DEVELOPMENT, AI & AUTOMATION, APP DEVELOPMENT, WEB DEVELOPMENT |
-| `TEST_6` | Existing email with incorrect name (must reject) | ✅ PASSED | Correctly rejected name mismatch |
+| `TEST_6` | Verification by Registered Email (Allows formal original names & initials) | ✅ PASSED | Email amman100d@gmail.com verified regardless of initial variations; uses entered name: "AMMAN KUMAR D (Formal Initials)" |
 | `TEST_7` | Unknown email address (must reject) | ✅ PASSED | Correctly not found in authoritative records |
 | `TEST_8` | Correct email with unregistered domain (must reject generation) | ✅ PASSED | Abdul Rahman Shaikh is not in APP DEVELOPMENT, rejected |
 | `TEST_9` | Inactive participant status check | ✅ PASSED | Inactive participant disallowed from verification |
 | `TEST_10` | Empty college name validation (must reject) | ✅ PASSED | Rejected empty college name |
-| `TEST_11` | Long participant name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011962 bytes |
-| `TEST_12` | Long college name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011964 bytes |
+| `TEST_11` | Long participant name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011959 bytes |
+| `TEST_12` | Long college name PDF generation & scaling | ✅ PASSED | Generated PDF size: 1011961 bytes |
 | `TEST_13` | Duplicate PDF generation idempotency | ✅ PASSED | Existing offer letter retrieved instead of creating redundant document |
 | `TEST_14` | Expired verification session rejection | ✅ PASSED | Expired session correctly invalidated |
 | `TEST_15` | Official Issue Date validation (01 November 2026) | ✅ PASSED | Single page PDF with fixed issue date: 01 November 2026 |
